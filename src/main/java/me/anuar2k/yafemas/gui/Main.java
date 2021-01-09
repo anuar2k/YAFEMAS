@@ -12,6 +12,8 @@ public class Main extends Application {
         Parent root = FXMLLoader.load(this.getClass().getResource("main.fxml"));
 
         primaryStage.setTitle("YAFEMAS");
+        primaryStage.setMinWidth(800);
+        primaryStage.setMinHeight(600);
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }

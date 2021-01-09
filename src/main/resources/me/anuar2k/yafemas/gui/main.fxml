@@ -1,11 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.anuar2k.yafemas.gui.MainController">
-   <children>
-      <Label fx:id="debugLabel" layoutX="103.0" layoutY="84.0" text="Label" />
-   </children>
-</AnchorPane>
+<BorderPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.anuar2k.yafemas.gui.MainController">
+   <center>
+      <LineChart legendVisible="false" BorderPane.alignment="CENTER">
+        <xAxis>
+          <CategoryAxis side="BOTTOM" />
+        </xAxis>
+        <yAxis>
+          <NumberAxis side="LEFT" />
+        </yAxis>
+      </LineChart>
+   </center>
+   <left>
+      <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <TextFlow fx:id="yafemasLabel" prefHeight="20.0" style="-fx-font-family: monospace; -fx-font-size: 24px; -fx-line-spacing: -9px;">
+               <VBox.margin>
+                  <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+               </VBox.margin></TextFlow>
+            <Button mnemonicParsing="false" text="Button" />
+         </children></VBox>
+   </left>
+</BorderPane>
