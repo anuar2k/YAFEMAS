@@ -3,7 +3,9 @@ package me.anuar2k.yafemas.gui;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Spinner;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import me.anuar2k.yafemas.solver.Solution;
@@ -14,23 +16,27 @@ import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
     @FXML
-    TextFlow yafemasLabel;
+    private TextFlow yafemasLabel;
 
     @FXML
-    LineChart<Number, Number> plot;
+    private LineChart<Number, Number> plot;
+
+    @FXML
+    private Spinner<Integer> feCount;
+
+    @FXML
+    private Spinner<Integer> ipCount;
+
+    private Solver solver = null;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.buildYafemasLabel();
-        Solution s = Solver.solve(100, 10);
-        XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
-        for (int i = 0; i < s.coefficients.length; i++) {
-            double x = (s.domRight - s.domLeft) / (s.coefficients.length - 1) * i;
-            series.getData().add(new XYChart.Data<>(x, s.coefficients[i]));
-        }
+        this.feCount.getValueFactory().valueProperty().addListener(value -> this.recalculate());
+        this.ipCount.getValueFactory().valueProperty().addListener(value -> this.recalculate());
 
-        this.plot.getData().add(series);
+        this.recalculate();
     }
 
     private void buildYafemasLabel() {
@@ -49,5 +55,22 @@ public class MainController implements Initializable {
                 this.yafemasLabel.getChildren().add(new Text("\n"));
             }
         }
+    }
+
+    private void recalculate() {
+        if (this.solver == null || this.solver.integrationPointCount != this.ipCount.getValue()) {
+            this.solver = new Solver(this.ipCount.getValue());
+        }
+
+        Solution solution = this.solver.solve(this.feCount.getValue(), this.ipCount.getValue());
+        XYChart.Series<Number, Number> series = new XYChart.Series<>();
+
+        for (int i = 0; i < solution.coefficients.length; i++) {
+            double x = (solution.domRight - solution.domLeft) * i / (solution.coefficients.length - 1);
+            series.getData().add(new XYChart.Data<>(x, solution.coefficients[i]));
+        }
+
+        this.plot.getData().clear();
+        this.plot.getData().add(series);
     }
 }

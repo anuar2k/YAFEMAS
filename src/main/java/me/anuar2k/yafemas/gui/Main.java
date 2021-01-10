@@ -11,10 +11,14 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(this.getClass().getResource("main.fxml"));
 
-        primaryStage.setTitle("YAFEMAS");
+        primaryStage.setTitle("YAFEMAS - anuar2k 2020");
         primaryStage.setMinWidth(800);
         primaryStage.setMinHeight(600);
-        primaryStage.setScene(new Scene(root));
+
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add(this.getClass().getResource("main.css").toExternalForm());
+
+        primaryStage.setScene(scene);
         primaryStage.show();
     }
 

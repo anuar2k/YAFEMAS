@@ -7,24 +7,26 @@ import org.apache.commons.math3.linear.*;
 import java.util.Arrays;
 
 public class Solver {
-    private Solver() {
+    public final int integrationPointCount;
+    private final UnivariateIntegrator integrator;
 
-    }
-
-    public static Solution solve(int discretization, int integrationPointCount) {
-        if (discretization < 2) {
-            throw new IllegalArgumentException("n must be > 2");
-        }
-        if (integrationPointCount < 2) {
-            throw new IllegalArgumentException("integrationPointCount must be > 2");
-        }
-
-        double dom = 2;
-
-        UnivariateIntegrator integrator = new IterativeLegendreGaussIntegrator(
+    public Solver(int integrationPointCount) {
+        this.integrationPointCount = integrationPointCount;
+        this.integrator = new IterativeLegendreGaussIntegrator(
                 integrationPointCount,
                 1e-6,
                 1e-6);
+    }
+
+    public Solution solve(int discretization, int integrationPointCount) {
+        if (discretization < 2) {
+            throw new IllegalArgumentException("n must be > 2");
+        }
+        if (integrationPointCount < 10) {
+            throw new IllegalArgumentException("integrationPointCount must be > 10");
+        }
+
+        double dom = 2;
 
         //build B matrix
         RealMatrix bMatrix = new Array2DRowRealMatrix(discretization, discretization);
@@ -40,7 +42,7 @@ public class Solver {
                     double integrateFrom = Math.max(0, dom * (Math.min(n, m) - 1) / discretization);
                     double integrateTo = Math.min(dom, dom * (Math.max(n, m) + 1) / discretization);
 
-                    integral = integrator.integrate(
+                    integral = this.integrator.integrate(
                             Integer.MAX_VALUE,
                             x -> E(x) * dBasis_dx(discretization, dom, finalN, x) * dBasis_dx(discretization, dom, finalM, x),
                             integrateFrom,
