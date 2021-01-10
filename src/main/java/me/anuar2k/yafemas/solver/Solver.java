@@ -11,6 +11,10 @@ public class Solver {
     private final UnivariateIntegrator integrator;
 
     public Solver(int integrationPointCount) {
+        if (integrationPointCount < 10) {
+            throw new IllegalArgumentException("integrationPointCount must be > 10");
+        }
+
         this.integrationPointCount = integrationPointCount;
         this.integrator = new IterativeLegendreGaussIntegrator(
                 integrationPointCount,
@@ -18,12 +22,9 @@ public class Solver {
                 1e-6);
     }
 
-    public Solution solve(int discretization, int integrationPointCount) {
+    public Solution solve(int discretization) {
         if (discretization < 2) {
             throw new IllegalArgumentException("n must be > 2");
-        }
-        if (integrationPointCount < 10) {
-            throw new IllegalArgumentException("integrationPointCount must be > 10");
         }
 
         double dom = 2;

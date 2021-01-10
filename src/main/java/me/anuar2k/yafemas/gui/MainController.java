@@ -62,7 +62,7 @@ public class MainController implements Initializable {
             this.solver = new Solver(this.ipCount.getValue());
         }
 
-        Solution solution = this.solver.solve(this.feCount.getValue(), this.ipCount.getValue());
+        Solution solution = this.solver.solve(this.feCount.getValue());
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
         for (int i = 0; i < solution.coefficients.length; i++) {
