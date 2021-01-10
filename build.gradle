@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'me.anuar2k'
-version '1.0-SNAPSHOT'
+version '1.0'
 
 repositories {
     mavenCentral()
@@ -29,9 +29,6 @@ mainClassName = 'me.anuar2k.yafemas.MainProxy'
 
 jar {
     manifest {
-        attributes 'Main-Class': 'me.anuar2k.yafemas.MainProxy'
-    }
-    from {
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+        attributes 'Main-Class': mainClassName
     }
 }
