@@ -22,12 +22,12 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.buildYafemasLabel();
-        Solution s = Solver.solve(2, 2);
+        Solution s = Solver.solve(100, 10);
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
-        for (int i = 0; i < 21; i++) {
-            double point = 2.0 * i / 20;
-            series.getData().add(new XYChart.Data<>(point, s.value(point)));
+        for (int i = 0; i < s.coefficients.length; i++) {
+            double x = (s.domRight - s.domLeft) / (s.coefficients.length - 1) * i;
+            series.getData().add(new XYChart.Data<>(x, s.coefficients[i]));
         }
 
         this.plot.getData().add(series);

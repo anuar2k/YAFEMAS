@@ -2,27 +2,45 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
 <BorderPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.anuar2k.yafemas.gui.MainController">
    <center>
-      <LineChart fx:id="plot" legendVisible="false" BorderPane.alignment="CENTER">
+      <LineChart fx:id="plot" horizontalZeroLineVisible="false" legendVisible="false" verticalZeroLineVisible="false" BorderPane.alignment="CENTER">
         <xAxis>
-          <NumberAxis side="BOTTOM" />
+          <NumberAxis autoRanging="false" label="x" lowerBound="-0.2" side="BOTTOM" tickUnit="0.2" upperBound="2.2" />
         </xAxis>
         <yAxis>
-          <NumberAxis side="LEFT" />
+          <NumberAxis label="u(x)" side="LEFT" />
         </yAxis>
       </LineChart>
    </center>
    <left>
       <VBox alignment="TOP_CENTER" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <TextFlow fx:id="yafemasLabel" prefHeight="20.0" style="-fx-font-family: monospace; -fx-font-size: 24px; -fx-line-spacing: -9px;">
+            <TextFlow fx:id="yafemasLabel" prefHeight="20.0" style="-fx-font-family: monospace; -fx-font-size: 24px; -fx-line-spacing: -9px;" textAlignment="CENTER">
                <VBox.margin>
                   <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
                </VBox.margin></TextFlow>
+            <Label text="Finite elements count:">
+               <VBox.margin>
+                  <Insets left="8.0" />
+               </VBox.margin>
+            </Label>
+            <Spinner prefWidth="184.0">
+               <VBox.margin>
+                  <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+               </VBox.margin>
+            </Spinner>
+            <Label text="Integration points count:" />
+            <Spinner prefWidth="184.0">
+               <VBox.margin>
+                  <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+               </VBox.margin>
+            </Spinner>
+            <CheckBox mnemonicParsing="false" text="Plot basis" />
          </children></VBox>
    </left>
 </BorderPane>

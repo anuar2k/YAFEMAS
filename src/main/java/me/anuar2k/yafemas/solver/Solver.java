@@ -4,9 +4,7 @@ import org.apache.commons.math3.analysis.integration.IterativeLegendreGaussInteg
 import org.apache.commons.math3.analysis.integration.UnivariateIntegrator;
 import org.apache.commons.math3.linear.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
+import java.util.Arrays;
 
 public class Solver {
     private Solver() {
@@ -22,122 +20,85 @@ public class Solver {
         }
 
         double dom = 2;
-        double h = dom / discretization;
-        double hInv = discretization / dom;
 
         UnivariateIntegrator integrator = new IterativeLegendreGaussIntegrator(
                 integrationPointCount,
-                IterativeLegendreGaussIntegrator.DEFAULT_RELATIVE_ACCURACY,
-                IterativeLegendreGaussIntegrator.DEFAULT_ABSOLUTE_ACCURACY);
-
-        int basisCount = discretization + 1;
-        List<Function<Double, Double>> basis = new ArrayList<>(basisCount);
-        List<Function<Double, Double>> basisDerivatives = new ArrayList<>(basisCount);
-
-        //build basis functions and their derivatives
-        basis.add(x -> {
-            if (x < 0 || x > h) {
-                return 0.0;
-            }
-            return 1.0 - x * hInv;
-        });
-
-        basisDerivatives.add(x -> {
-            if (x < 0 || x > h) {
-                return 0.0;
-            }
-            return -hInv;
-        });
-
-        for (int i = 1; i < basisCount - 1; i++) {
-            double center = dom * i / discretization;
-            double left = center - h;
-            double right = center + h;
-
-            basis.add(x -> {
-                if (x < left || x > right) {
-                    return 0.0;
-                }
-                if (x <= center) {
-                    return (x - left) * hInv;
-                }
-                return (right - x) * hInv;
-            });
-
-            basisDerivatives.add(x -> {
-                if (x < left || x > right) {
-                    return 0.0;
-                }
-                if (x <= center) {
-                    return hInv;
-                }
-                return -hInv;
-            });
-        }
-
-        basis.add(x -> {
-            if (x < dom - h || x > dom) {
-                return 0.0;
-            }
-
-            return (x - dom) * hInv + 1;
-        });
-
-        basisDerivatives.add(x -> {
-            if (x < dom - h || x > dom) {
-                return 0.0;
-            }
-            
-            return hInv;
-        });
+                1e-6,
+                1e-6);
 
         //build B matrix
-        RealMatrix bMatrix = new Array2DRowRealMatrix(basisCount, basisCount);
+        RealMatrix bMatrix = new Array2DRowRealMatrix(discretization, discretization);
 
-        for (int n = 0; n < basisCount; n++) {
-            for (int m = 0; m < basisCount; m++) {
-                Function<Double, Double> u = basis.get(n);
-                Function<Double, Double> uDerivative = basisDerivatives.get(n);
-                Function<Double, Double> v = basis.get(m);
-                Function<Double, Double> vDerivative = basisDerivatives.get(m);
+        for (int n = 0; n < discretization; n++) {
+            for (int m = 0; m < discretization; m++) {
+                double integral = 0;
 
-                double integral = integrator.integrate(
-                        Integer.MAX_VALUE,
-                        x -> E(x) * uDerivative.apply(x) * vDerivative.apply(x),
-                        0,
-                        dom);
+                if (Math.abs(m - n) <= 1) {
+                    int finalN = n;
+                    int finalM = m;
 
-                bMatrix.setEntry(n, m, -E(0) * u.apply(0.0) * v.apply(0.0) + integral);
+                    double integrateFrom = Math.max(0, dom * (Math.min(n, m) - 1) / discretization);
+                    double integrateTo = Math.min(dom, dom * (Math.max(n, m) + 1) / discretization);
+
+                    integral = integrator.integrate(
+                            Integer.MAX_VALUE,
+                            x -> E(x) * dBasis_dx(discretization, dom, finalN, x) * dBasis_dx(discretization, dom, finalM, x),
+                            integrateFrom,
+                            integrateTo);
+                }
+
+                bMatrix.setEntry(n, m, -E(0) * basis(discretization, dom, n, 0) * basis(discretization, dom, m, 0) + integral);
             }
         }
 
         //build L vector
-        RealVector lVector = new ArrayRealVector(basisCount);
-
-        for (int m = 0; m < basisCount; m++) {
-            Function<Double, Double> v = basis.get(m);
-            lVector.setEntry(m, -10 * E(0) * v.apply(0.0));
-        }
+        RealVector lVector = new ArrayRealVector(discretization, 0);
+        lVector.setEntry(0, -10 * E(0) * basis(discretization, dom, 0, 0));
 
         //calculate coefficients
         RealVector coefficients = new LUDecomposition(bMatrix).getSolver().solve(lVector);
 
-        System.out.println(bMatrix);
-        System.out.println(lVector);
-        System.out.println(coefficients);
+        double[] result = Arrays.copyOf(coefficients.toArray(), discretization + 1);
+        result[discretization] = 0;
 
-        List<Function<Double, Double>> elements = new ArrayList<>(basisCount);
-        for (int i = 0; i < basisCount; i++) {
-            Function<Double, Double> base = basis.get(i);
-            double coefficient = coefficients.getEntry(i);
-
-            elements.add(x -> coefficient * base.apply(x));
-        }
-
-        return new Solution(0, dom, elements);
+        return new Solution(0, dom, result);
     }
 
     private static double E(double x) {
         return x <= 1.0 ? 3.0 : 5.0;
+    }
+    
+    private static double basis(int discretization, double dom, int i, double x) {
+        double h = dom / discretization;
+        double hInv = discretization / dom;
+        
+        double center = dom * i / discretization;
+        double left = center - h;
+        double right = center + h;
+
+        if (x < left || x > right) {
+            return 0.0;
+        }
+        if (x <= center) {
+            return (x - left) * hInv;
+        }
+        return (right - x) * hInv;
+    }
+    
+    private static double dBasis_dx(int discretization, double dom, int i, double x) {
+        double h = dom / discretization;
+        double hInv = discretization / dom;
+
+        double center = dom * i / discretization;
+        double left = center - h;
+        double right = center + h;
+        
+        if (x < left || x > right) {
+            return 0.0;
+        }
+        if (x <= center) {
+            return hInv;
+        }
+        return -hInv;
     }
 }
