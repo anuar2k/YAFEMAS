@@ -2,15 +2,14 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.chart.*?>
-<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
 <BorderPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.anuar2k.yafemas.gui.MainController">
    <center>
-      <LineChart legendVisible="false" BorderPane.alignment="CENTER">
+      <LineChart fx:id="plot" legendVisible="false" BorderPane.alignment="CENTER">
         <xAxis>
-          <CategoryAxis side="BOTTOM" />
+          <NumberAxis side="BOTTOM" />
         </xAxis>
         <yAxis>
           <NumberAxis side="LEFT" />
@@ -24,7 +23,6 @@
                <VBox.margin>
                   <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
                </VBox.margin></TextFlow>
-            <Button mnemonicParsing="false" text="Button" />
          </children></VBox>
    </left>
 </BorderPane>
