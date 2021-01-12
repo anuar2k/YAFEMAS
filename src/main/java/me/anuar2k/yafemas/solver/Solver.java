@@ -63,6 +63,14 @@ public class Solver {
 
         double[] result = Arrays.copyOf(coefficients.toArray(), discretization + 1);
         result[discretization] = 0;
+        
+        System.out.print("bMatrix: ");
+        System.out.println(bMatrix):
+        System.out.print("lVector: ");
+        System.out.println(lVector);
+        System.out.print("result: ");
+        System.out.println(Arrays.toString(result));
+        System.out.println("---------------------------");
 
         return new Solution(0, dom, result);
     }
