@@ -65,7 +65,7 @@ public class Solver {
         result[discretization] = 0;
         
         System.out.print("bMatrix: ");
-        System.out.println(bMatrix):
+        System.out.println(bMatrix);
         System.out.print("lVector: ");
         System.out.println(lVector);
         System.out.print("result: ");
