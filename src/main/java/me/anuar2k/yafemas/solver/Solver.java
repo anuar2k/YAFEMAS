@@ -40,8 +40,9 @@ public class Solver {
                     int finalN = n;
                     int finalM = m;
 
-                    double integrateFrom = Math.max(0, dom * (Math.min(n, m) - 1) / discretization);
-                    double integrateTo = Math.min(dom, dom * (Math.max(n, m) + 1) / discretization);
+                    //find the intersection of basis function domains and the global domain [0, dom]
+                    double integrateFrom = dom * Math.max(Math.max(n, m) - 1, 0             ) / discretization;
+                    double integrateTo =   dom * Math.min(Math.min(n, m) + 1, discretization) / discretization;
 
                     integral = this.integrator.integrate(
                             Integer.MAX_VALUE,
