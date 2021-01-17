@@ -36,6 +36,13 @@ public class MainController implements Initializable {
         this.feCount.getValueFactory().valueProperty().addListener(value -> this.recalculate());
         this.ipCount.getValueFactory().valueProperty().addListener(value -> this.recalculate());
 
+        XYChart.Series<Number, Number> exactSolution = new XYChart.Series<>();
+        exactSolution.getData().add(new XYChart.Data<>(0d, 80d / 3d));
+        exactSolution.getData().add(new XYChart.Data<>(1d, 10d));
+        exactSolution.getData().add(new XYChart.Data<>(2d, 0d));
+
+        this.plot.getData().add(0, exactSolution);
+
         this.recalculate();
     }
 
@@ -70,7 +77,10 @@ public class MainController implements Initializable {
             series.getData().add(new XYChart.Data<>(x, solution.coefficients[i]));
         }
 
-        this.plot.getData().clear();
-        this.plot.getData().add(series);
+        if (this.plot.getData().size() > 1) {
+            this.plot.getData().remove(1);
+        }
+
+        this.plot.getData().add(1, series);
     }
 }
