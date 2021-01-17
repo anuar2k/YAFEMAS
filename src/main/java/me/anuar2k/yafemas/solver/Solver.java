@@ -73,7 +73,6 @@ public class Solver {
                          basis(discretization, dom, n, 2) *
                                  basis(discretization, dom, m, 2) -
                              integral1 + integral2);
-        ;
       }
     }
 
@@ -91,7 +90,7 @@ public class Solver {
         integral = this.integrator.integrate(
             Integer.MAX_VALUE,
             x
-            -> - basis(discretization, dom, finalN, x) * Math.sin(x),
+            -> -basis(discretization, dom, finalN, x) * Math.sin(x),
             integrateFrom, integrateTo);
       }
       lVector.setEntry(n, integral);
