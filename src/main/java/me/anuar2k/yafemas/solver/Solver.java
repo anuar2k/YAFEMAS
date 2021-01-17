@@ -30,8 +30,8 @@ public class Solver {
     RealMatrix bMatrix =
         new Array2DRowRealMatrix(discretization, discretization);
 
-    for (int n = 0; n < discretization; n++) {
-      for (int m = 0; m < discretization; m++) {
+    for (int n = 1; n <= discretization; n++) {
+      for (int m = 1; m <= discretization; m++) {
         double integral1 = 0;
 
         if (Math.abs(m - n) <= 1) {
@@ -69,7 +69,7 @@ public class Solver {
                      basis(discretization, dom, finalM, x),
               integrateFrom, integrateTo);
         }
-        bMatrix.setEntry(n, m,
+        bMatrix.setEntry(n - 1, m - 1,
                          basis(discretization, dom, n, 2) *
                                  basis(discretization, dom, m, 2) -
                              integral1 + integral2);
@@ -78,30 +78,29 @@ public class Solver {
 
     // build L vector
     RealVector lVector = new ArrayRealVector(discretization, 0);
-    for (int n = 0; n < discretization; n++) {
+    for (int n = 1; n <= discretization; n++) {
       double integral = 0;
 
-      if (n > 0) {
-        int finalN = n;
+      int finalN = n;
 
-        double integrateFrom = 0;
-        double integrateTo = 2;
+      double integrateFrom = 0;
+      double integrateTo = 2;
 
-        integral = this.integrator.integrate(
-            Integer.MAX_VALUE,
-            x
-            -> -basis(discretization, dom, finalN, x) * Math.sin(x),
-            integrateFrom, integrateTo);
-      }
-      lVector.setEntry(n, integral);
+      integral = this.integrator.integrate(
+          Integer.MAX_VALUE,
+          x
+          -> -basis(discretization, dom, finalN, x) * Math.sin(x),
+          integrateFrom, integrateTo);
+      lVector.setEntry(n - 1, integral);
     }
 
     // calculate coefficients
     RealVector coefficients =
         new LUDecomposition(bMatrix).getSolver().solve(lVector);
 
-    double[] result = Arrays.copyOf(coefficients.toArray(), discretization + 1);
-    result[discretization] = 0;
+    double[] result = new double[discretization + 1];
+    result[0] = 0;
+    System.arraycopy(coefficients.toArray(), 0, result, 1, discretization);
 
     System.out.print("bMatrix: ");
     System.out.println(bMatrix);
