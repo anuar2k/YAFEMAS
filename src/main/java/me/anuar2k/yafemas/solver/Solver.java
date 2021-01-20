@@ -60,7 +60,9 @@ public class Solver {
         lVector.setEntry(0, -10 * E(0) * basis(discretization, dom, 0, 0));
 
         //calculate coefficients
-        RealVector coefficients = new LUDecomposition(bMatrix).getSolver().solve(lVector);
+//        RealVector coefficients = new LUDecomposition(bMatrix).getSolver().solve(lVector);
+        RealVector coefficients = new ThomasSolver().solve(bMatrix, lVector);
+        System.out.println(coefficients);
 
         double[] result = Arrays.copyOf(coefficients.toArray(), discretization + 1);
         result[discretization] = 0;
